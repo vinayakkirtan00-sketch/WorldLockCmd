@@ -1,0 +1,12 @@
+# World wise blocked commands (without /)
+worlds:
+  lobby:
+    - help
+    - plugins
+    - pl
+
+  survival:
+    - plugins
+    - pl
+
+blocked-message: "§cYou cannot use this command in this world!"
