@@ -4,7 +4,8 @@ namespace WorldLockCmd;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerCommandPreprocessEvent;
+use pocketmine\event\server\CommandEvent;
+use pocketmine\player\Player;
 
 class Main extends PluginBase implements Listener {
 
@@ -13,21 +14,19 @@ class Main extends PluginBase implements Listener {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    public function onCommandUse(PlayerCommandPreprocessEvent $event): void {
-        $player = $event->getPlayer();
+    public function onCommand(CommandEvent $event): void {
+        $sender = $event->getSender();
 
-        // Bypass permission
-        if ($player->hasPermission("worldlockcmd.bypass")) {
+        if (!$sender instanceof Player) {
             return;
         }
 
-        $message = strtolower(trim($event->getMessage()));
-        if (!str_starts_with($message, "/")) {
+        if ($sender->hasPermission("worldlockcmd.bypass")) {
             return;
         }
 
-        $command = explode(" ", substr($message, 1))[0];
-        $worldName = $player->getWorld()->getFolderName();
+        $command = strtolower($event->getCommand());
+        $worldName = $sender->getWorld()->getFolderName();
 
         $worlds = $this->getConfig()->get("worlds", []);
         if (!isset($worlds[$worldName])) {
@@ -38,7 +37,7 @@ class Main extends PluginBase implements Listener {
 
         if (in_array($command, $blocked, true)) {
             $event->cancel();
-            $player->sendMessage($this->getConfig()->get("blocked-message"));
+            $sender->sendMessage($this->getConfig()->get("blocked-message"));
         }
     }
 }
