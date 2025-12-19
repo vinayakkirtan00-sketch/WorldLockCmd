@@ -1,0 +1,9 @@
+name: WorldLockCmd
+version: 1.1.0
+main: WorldLockCmd\Main
+api: 5.0.0
+author: Kirtan
+description: World-wise command blocker for PocketMine-MP
+permissions:
+  worldlockcmd.bypass:
+    default: op
