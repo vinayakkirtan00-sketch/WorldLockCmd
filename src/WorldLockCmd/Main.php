@@ -5,6 +5,7 @@ namespace WorldLockCmd;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\event\server\CommandEvent;
+use pocketmine\event\EventHandler;
 use pocketmine\player\Player;
 
 class Main extends PluginBase implements Listener {
@@ -14,7 +15,8 @@ class Main extends PluginBase implements Listener {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    public function onCommand(CommandEvent $event): void {
+    #[EventHandler]
+    public function handleCommand(CommandEvent $event): void {
         $sender = $event->getSender();
 
         if (!$sender instanceof Player) {
@@ -35,6 +37,12 @@ class Main extends PluginBase implements Listener {
 
         $blocked = array_map("strtolower", $worlds[$worldName]);
 
+        if (in_array($command, $blocked, true)) {
+            $event->cancel();
+            $sender->sendMessage($this->getConfig()->get("blocked-message"));
+        }
+    }
+}
         if (in_array($command, $blocked, true)) {
             $event->cancel();
             $sender->sendMessage($this->getConfig()->get("blocked-message"));
